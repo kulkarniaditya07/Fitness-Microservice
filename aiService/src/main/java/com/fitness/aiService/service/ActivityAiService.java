@@ -7,10 +7,12 @@ import com.fitness.aiService.util.PromptUtils;
 import com.fitness.util.common.PageableObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,11 +24,26 @@ public class ActivityAiService {
 
 
 
-    public Recommendation generateRecommendation(Activity activity){
-        String prompt= PromptUtils.createActivityPrompt(activity);
-        String response=geminiService.getRecommendations(prompt);
-        return processAiResponse(activity,response);
+//    public Recommendation generateRecommendation(Activity activity){
+//        String prompt= PromptUtils.createActivityPrompt(activity);
+//        String response=geminiService.getRecommendations(prompt);
+//        return processAiResponse(activity,response);
+//    }
+    @Async("kafkaExecutor")
+    public CompletableFuture<Recommendation> generateRecommendationAsync(Activity activity){
+        try{
+            String prompt = PromptUtils.createActivityPrompt(activity);
+            String response = geminiService.getRecommendations(prompt); // runs on async thread
+            Recommendation recommendation = processAiResponse(activity, response);
+            return CompletableFuture.completedFuture(recommendation);
+
+        }catch (Exception e){
+            log.error("Error generating recommendation for activity {}", activity.getId(), e);
+            return CompletableFuture.completedFuture(defaultRecommendation(activity));
+        }
     }
+
+
 
     private Recommendation processAiResponse(Activity activity, String response) {
         try {
