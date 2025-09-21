@@ -126,7 +126,7 @@ public class ActivityAiService {
         JsonNode valueNode = analysisNode.path(key);
 
         if (valueNode.isMissingNode() || valueNode.isNull()) {
-            return; // skip if key doesn't exist or is null
+            return;
         }
 
         String value = valueNode.asText("").trim();

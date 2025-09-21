@@ -28,8 +28,6 @@ public class ActivityServiceImpl implements ActivityService {
     @Value("${kafka.topic.name}")
     private String topicName;
 
-    //youtube timestamp 2:27:50
-
     @Override
     public RestApiResponse<String> trackActivity(ActivityRequest request) {
         validateUser(request.getUserId());
