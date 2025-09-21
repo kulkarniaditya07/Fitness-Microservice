@@ -11,10 +11,10 @@
 
     <modules>
         <module>fitness-util</module>
-        <module>activityService</module>
-        <module>userService</module>
-        <module>aiService</module>
-        <module>configServer</module>
+        <module>ActivityService</module>
+        <module>UserService</module>
+        <module>AiService</module>
+        <module>ConfigServer</module>
     </modules>
 
     <properties>
