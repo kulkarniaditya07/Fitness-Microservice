@@ -1,2 +1,5 @@
-The current architecture of the Microservice before implementing KeyCloak
-<img width="1875" height="935" alt="image" src="https://github.com/user-attachments/assets/a8b87fd1-b4f7-4f46-ac30-96a93e04d12a" />
+The current architecture of the Microservice
+
+<img width="1584" height="661" alt="Mircoservice Architecture" src="https://github.com/user-attachments/assets/d93cbef5-003e-4848-b9e9-72fd8909b3a9" />
+
+
