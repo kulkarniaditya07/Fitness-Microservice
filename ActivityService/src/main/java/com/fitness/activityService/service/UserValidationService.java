@@ -1,7 +1,7 @@
 package com.fitness.activityService.service;
 
 import com.fitness.util.exceptions.RestApiException;
-import com.fitness.util.response.RestApiResponse;
+import com.fitness.util.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
@@ -16,10 +16,10 @@ public class UserValidationService {
 
 public Boolean validateUser(Long id) {
     try {
-        RestApiResponse<Boolean> response = userServiceWebclient.get()
+        ApiResponse<Boolean> response = userServiceWebclient.get()
                 .uri("/api/users/{id}/validate",id)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<RestApiResponse<Boolean>>() {})
+                .bodyToMono(new ParameterizedTypeReference<ApiResponse<Boolean>>() {})
                 .block();
         if (response == null || response.getData() == null) {
             throw new RestApiException("Empty response from User Service", HttpStatus.BAD_GATEWAY);

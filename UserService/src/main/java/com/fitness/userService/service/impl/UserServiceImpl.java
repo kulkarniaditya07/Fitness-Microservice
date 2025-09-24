@@ -8,14 +8,17 @@ import com.fitness.userService.repository.UserRepository;
 import com.fitness.userService.service.UserService;
 import com.fitness.util.common.PageableObject;
 import com.fitness.util.common.ResponseUtil;
-import com.fitness.util.common.ValidationUtil;
 import com.fitness.util.exceptions.RestApiException;
-import com.fitness.util.response.RestApiResponse;
+import com.fitness.util.response.ApiResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 @Service
@@ -23,11 +26,12 @@ import java.util.function.Consumer;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-   private final PageableObject pageableObject;
-    private final ValidationUtil validationUtil;
+    private final PageableObject pageableObject;
+
+    private final Validator validator;
 
     @Override
-    public RestApiResponse<UserDTO> findUser(Long id) {
+    public ApiResponse<UserDTO> findUser(Long id) {
         User user= userRepository.findById(id)
                 .orElseThrow(()-> new RestApiException(String.format("User with id: %s not found", id),
                         HttpStatus.BAD_REQUEST));
@@ -35,14 +39,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestApiResponse<String> createUser(ResponseUserDT0 userDto) {
+    public ApiResponse<String> createUser(ResponseUserDT0 userDto) {
         User user=pageableObject.map(userDto,User.class);
         userRepository.save(user);
         return ResponseUtil.getResponseMessage("User saved");
     }
 
     @Override
-    public RestApiResponse<String> updateExistingUser(Long id, String dto) {
+    public ApiResponse<String> updateExistingUser(Long id, String dto) {
         ResponseUserDT0 userDT0=pageableObject.readValue(dto,ResponseUserDT0.class);
         JsonNode jsonNode = pageableObject.getJsonNode(dto);
         User user=userRepository.findById(id)
@@ -61,17 +65,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestApiResponse<String> removeUser(Long id) {
+    public ApiResponse<String> removeUser(Long id) {
         userRepository.findById(id)
                 .ifPresentOrElse(userRepository::delete, () -> {throw new RestApiException(String.format("User with id: %s not found", id),
                                     HttpStatus.BAD_REQUEST);
                 });
-        // only executed if user existed & got deleted
+        // only executed if the user existed & got deleted
         return com.fitness.util.common.ResponseUtil.getResponseMessage("User Deleted");
     }
 
     @Override
-    public RestApiResponse<Boolean> existsById(Long id) {
+    public ApiResponse<Boolean> existsById(Long id) {
         return ResponseUtil.getResponse(userRepository.existsById(id),"User validation result");
     }
 
@@ -83,12 +87,20 @@ public class UserServiceImpl implements UserService {
                     String value = valueNode.asText();
 
                     // validate only the property present in DTO
-                    validationUtil.validateProperty(userDTO, fieldName);
+                   validateProperty(userDTO, fieldName);
 
                     // update entity field
                     setter.accept(value);
                 }
             }
         });
+    }
+
+
+    public <T> void validateProperty(T object, String propertyName) {
+        Set<ConstraintViolation<T>> violations = validator.validateProperty(object, propertyName);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
     }
 }

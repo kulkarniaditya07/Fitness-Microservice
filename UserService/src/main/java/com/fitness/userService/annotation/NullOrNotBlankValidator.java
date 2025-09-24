@@ -1,6 +1,5 @@
 package com.fitness.userService.annotation;
 
-import com.fitness.util.common.ValidationUtil;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +24,7 @@ public class NullOrNotBlankValidator implements ConstraintValidator<NullOrNotBla
     }
 
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (ValidationUtil.isBlank(value)) {
+        if (isBlank(value)) {
             return !isMandatory.equals("yes");
         }
 
@@ -37,6 +36,8 @@ public class NullOrNotBlankValidator implements ConstraintValidator<NullOrNotBla
         return length >= min && length <= max;
     }
 
+
+
     private boolean emailValidator(String email){
           final String EMAIL_REGEX =
                 "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
@@ -47,5 +48,9 @@ public class NullOrNotBlankValidator implements ConstraintValidator<NullOrNotBla
         }
         Matcher matcher = EMAIL_PATTERN.matcher(email);
         return matcher.matches();
+    }
+
+    public static boolean isBlank(final CharSequence cs) {
+        return StringUtils.isBlank(cs);
     }
 }

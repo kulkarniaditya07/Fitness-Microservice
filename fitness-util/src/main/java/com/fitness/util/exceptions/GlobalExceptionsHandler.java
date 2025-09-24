@@ -1,6 +1,6 @@
 package com.fitness.util.exceptions;
 
-import com.fitness.util.response.RestApiResponse;
+import com.fitness.util.response.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,8 +20,8 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionsHandler {
     @ExceptionHandler(RestApiException.class)
-    public ResponseEntity<RestApiResponse<Object>> handleRestApiException(RestApiException ex, WebRequest request){
-        return new ResponseEntity<>(RestApiResponse.builder().message(ex.getMessage())
+    public ResponseEntity<ApiResponse<Object>> handleRestApiException(RestApiException ex, WebRequest request){
+        return new ResponseEntity<>(ApiResponse.builder().message(ex.getMessage())
                 .errors(request.getDescription(false))
                 .timestamp(new Date())
                 .build(), HttpStatus.BAD_REQUEST);
@@ -29,26 +29,26 @@ public class GlobalExceptionsHandler {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<RestApiResponse<Object>> handleMethodValidationException(MethodArgumentNotValidException ex, WebRequest request){
+    public ResponseEntity<ApiResponse<Object>> handleMethodValidationException(MethodArgumentNotValidException ex, WebRequest request){
         List<String> errors=new ArrayList<>();
         for(FieldError error: ex.getBindingResult().getFieldErrors()){
             errors.add(error.getDefaultMessage());
         }
         Collections.sort(errors);
-        return new ResponseEntity<>(RestApiResponse.builder().message(errors)
+        return new ResponseEntity<>(ApiResponse.builder().message(errors)
                 .errors(request.getDescription(false))
                 .timestamp(new Date())
                 .build(),HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<RestApiResponse<Object>> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request){
+    public ResponseEntity<ApiResponse<Object>> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request){
         List<String> errors=new ArrayList<>();
         for(ConstraintViolation<?> violation:ex.getConstraintViolations()){
             errors.add(violation.getMessage());
         }
         Collections.sort(errors);
-        return new ResponseEntity<>(RestApiResponse.builder()
+        return new ResponseEntity<>(ApiResponse.builder()
                 .message(errors)
                 .errors(request.getDescription(false))
                 .timestamp(new Date())
@@ -56,10 +56,10 @@ public class GlobalExceptionsHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<RestApiResponse<Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-                                                                                   WebRequest request){
+    protected ResponseEntity<ApiResponse<Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                               WebRequest request){
 
-        return new ResponseEntity<>(RestApiResponse.builder().timestamp(new Date())
+        return new ResponseEntity<>(ApiResponse.builder().timestamp(new Date())
                 .message(ex.getMessage())
                 .errors(request.getDescription(false))
                 .build(), HttpStatus.BAD_REQUEST);

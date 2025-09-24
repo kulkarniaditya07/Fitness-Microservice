@@ -2,7 +2,7 @@ package com.fitness.aiService.controller;
 
 import com.fitness.aiService.dto.RecommendationDto;
 import com.fitness.aiService.service.RecommendationService;
-import com.fitness.util.response.RestApiResponse;
+import com.fitness.util.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +20,12 @@ public class RecommendationController {
     private final RecommendationService recommendationService;
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<RestApiResponse<List<RecommendationDto>>> getUserRecommendation(@PathVariable(name = "userId") Long userId){
+    public ResponseEntity<ApiResponse<List<RecommendationDto>>> getUserRecommendation(@PathVariable(name = "userId") Long userId){
         return ResponseEntity.status(HttpStatus.OK).body(recommendationService.getRecommendationOnUser(userId));
     }
 
     @GetMapping("/activity/{activityId}")
-    public ResponseEntity<RestApiResponse<RecommendationDto>> getActivityRecommendation(@PathVariable(name = "activityId") String activityId){
+    public ResponseEntity<ApiResponse<RecommendationDto>> getActivityRecommendation(@PathVariable(name = "activityId") String activityId){
         return ResponseEntity.status(HttpStatus.OK).body(recommendationService.getRecommendationOnActivity(activityId));
     }
 }

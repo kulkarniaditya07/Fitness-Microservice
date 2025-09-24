@@ -13,7 +13,7 @@ import java.util.Date;
 @Setter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RestApiResponse<T> {
+public class ApiResponse<T> {
     private Object message;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

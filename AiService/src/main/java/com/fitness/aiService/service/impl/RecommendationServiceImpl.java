@@ -10,8 +10,7 @@ import com.fitness.aiService.service.RecommendationService;
 import com.fitness.util.common.PageableObject;
 import com.fitness.util.common.ResponseUtil;
 import com.fitness.util.exceptions.RestApiException;
-import com.fitness.util.response.RestApiResponse;
-import lombok.AllArgsConstructor;
+import com.fitness.util.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final PageableObject pageableObject;
 
     @Override
-    public RestApiResponse<List<RecommendationDto>> getRecommendationOnUser(Long userId) {
+    public ApiResponse<List<RecommendationDto>> getRecommendationOnUser(Long userId) {
         return ResponseUtil.getResponse(recommendationRepository.findByUserId(userId)
                         .stream()
                         .map(recommendation-> pageableObject.map(recommendation,RecommendationDto.class))
@@ -35,7 +34,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public RestApiResponse<RecommendationDto> getRecommendationOnActivity(String activityId) {
+    public ApiResponse<RecommendationDto> getRecommendationOnActivity(String activityId) {
         Recommendation recommendation=recommendationRepository.findByActivityId(activityId)
                 .orElseThrow(()-> new RestApiException(String.format("No recommendation found for activity with id: %s ", activityId), HttpStatus.BAD_REQUEST));
         return ResponseUtil.getResponse(pageableObject.map(recommendation,RecommendationDto.class),"Recommendation based on activity provided");

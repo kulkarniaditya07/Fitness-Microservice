@@ -9,8 +9,7 @@ import com.fitness.activityService.service.UserValidationService;
 import com.fitness.util.common.PageableObject;
 import com.fitness.util.common.ResponseUtil;
 import com.fitness.util.exceptions.RestApiException;
-import com.fitness.util.response.RestApiResponse;
-import lombok.AllArgsConstructor;
+import com.fitness.util.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,7 +28,7 @@ public class ActivityServiceImpl implements ActivityService {
     private String topicName;
 
     @Override
-    public RestApiResponse<String> trackActivity(ActivityRequest request) {
+    public ApiResponse<String> trackActivity(ActivityRequest request) {
         validateUser(request.getUserId());
         Activity activity=pageableObject.map(request,Activity.class);
         activity.setId(null);
@@ -43,7 +42,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public RestApiResponse<ActivityResponse> findActivity(String id) {
+    public ApiResponse<ActivityResponse> findActivity(String id) {
         ActivityResponse response = activityRepository.findById(id)
                 .map(activity -> pageableObject.map(activity, ActivityResponse.class))
                 .orElseThrow(() -> new RestApiException(
