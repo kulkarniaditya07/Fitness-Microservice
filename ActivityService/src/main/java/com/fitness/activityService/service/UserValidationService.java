@@ -4,7 +4,10 @@ import com.fitness.util.exceptions.RestApiException;
 import com.fitness.util.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -16,8 +19,11 @@ public class UserValidationService {
 
 public Boolean validateUser(Long id) {
     try {
+        JwtAuthenticationToken authenticationToken= (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        String token=authenticationToken.getToken().getTokenValue();
         ApiResponse<Boolean> response = userServiceWebclient.get()
                 .uri("/api/users/{id}/validate",id)
+                .header(HttpHeaders.AUTHORIZATION,"Bearer "+token)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ApiResponse<Boolean>>() {})
                 .block();
@@ -29,6 +35,5 @@ public Boolean validateUser(Long id) {
         throw new RestApiException(String.format("User service error: %s",e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
-
 
 }

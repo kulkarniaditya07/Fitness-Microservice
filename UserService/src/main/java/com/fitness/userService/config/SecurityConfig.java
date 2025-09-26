@@ -16,16 +16,16 @@ public class SecurityConfig {
         this.jwtUri = jwtUri;
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // disable CSRF for APIs
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()    // all endpoints secured
-                )
-                .oauth2ResourceServer(oauth2-> oauth2.jwt(jwt-> jwt.jwkSetUri(jwtUri)));
-
-        return http.build();
-    }
+    //@Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(csrf -> csrf.disable()) // disable CSRF for APIs
+//                .authorizeHttpRequests(auth -> auth
+//                        .anyRequest().authenticated()    // all endpoints secured
+//                )
+//                .oauth2ResourceServer(oauth2-> oauth2.jwt(jwt-> jwt.jwkSetUri(jwtUri)));
+//
+//        return http.build();
+//    }
 
 }
