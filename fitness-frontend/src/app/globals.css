@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --hero-grad-a: #37353E;
+  --hero-grad-b: #44444E;
+  --hero-grad-c: #D3DAD9;
+  --c1: #37353E;
+  --c2: #44444E;
+  --c3: #715A5A;
+  --c4: #D3DAD9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Space Grotesk', 'Avenir Next', 'Trebuchet MS', sans-serif;
+  background:
+    radial-gradient(circle at 15% 10%, var(--c2), transparent 45%),
+    radial-gradient(circle at 80% 90%, var(--c3), transparent 48%),
+    linear-gradient(140deg, var(--c1) 0%, var(--c2) 40%, var(--c1) 100%);
+  color: var(--c4);
+}
+
+.pattern-grid {
+  background-size: 22px 22px;
+}
+
+.night-grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 1;
+  background-image:
+    radial-gradient(circle at 20% 20%, var(--c2) 0.6px, transparent 0.8px),
+    radial-gradient(circle at 70% 35%, var(--c3) 0.6px, transparent 0.8px),
+    radial-gradient(circle at 35% 78%, var(--c1) 0.6px, transparent 0.8px);
+  background-size: 3px 3px, 4px 4px, 5px 5px;
+}
+
+.night-panel {
+  background: linear-gradient(165deg, var(--c1), var(--c2));
+  border: 1px solid var(--c2);
+  box-shadow: 0 24px 40px var(--c1), 0 0 0 1px var(--c2) inset;
+}
+
+.night-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--c2);
+  color: var(--c4);
+  padding: 0.6rem 0;
+  outline: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+}
+
+.night-input:focus {
+  border-bottom-color: var(--c4);
+}
+
+.night-input::placeholder {
+  color: var(--c3);
+}
+
+.night-pill {
+  background: linear-gradient(90deg, var(--c2), var(--c3));
+  color: var(--c4);
+}
+
+.night-button {
+  background: linear-gradient(90deg, var(--c2), var(--c3));
+  color: var(--c4);
+  border: 1px solid var(--c3);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.night-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.palette-login-bg {
+  background:
+    radial-gradient(circle at 15% 10%, var(--c2), transparent 45%),
+    radial-gradient(circle at 80% 90%, var(--c3), transparent 48%),
+    linear-gradient(140deg, var(--c1) 0%, var(--c2) 40%, var(--c1) 100%);
+}
+
+.palette-text-main {
+  color: var(--c4);
+}
+
+.palette-text-soft {
+  color: var(--c3);
+}
+
+.palette-text-dim {
+  color: var(--c2);
+}
+
+.palette-border {
+  border-color: var(--c2);
+}
+
+.palette-card {
+  background: linear-gradient(180deg, var(--c2), var(--c1));
+}
+
+.card-rise {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-rise:hover {
+  transform: translateY(-6px);
+}
+
+@keyframes pulse-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: pulse-in 0.6s ease both;
+}
