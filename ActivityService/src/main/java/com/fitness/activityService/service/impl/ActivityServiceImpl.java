@@ -36,7 +36,10 @@ public class ActivityServiceImpl implements ActivityService {
         try {
             kafkaTemplate.send(topicName,String.valueOf(activity.getUserId()), activity);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RestApiException(
+                    "Failed to send activity data to Kafka topic: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
         return ResponseUtil.getResponseMessage("Activity Saved!");
     }
