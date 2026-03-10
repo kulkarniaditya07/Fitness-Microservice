@@ -9,4 +9,6 @@ public interface RecommendationService {
     ApiResponse<List<RecommendationDto>> getRecommendationOnUser(Long userId);
 
     ApiResponse<RecommendationDto> getRecommendationOnActivity(String activityId);
+
+    ApiResponse<List<RecommendationDto>> generateRecommendationOnUser(Long userId);
 }

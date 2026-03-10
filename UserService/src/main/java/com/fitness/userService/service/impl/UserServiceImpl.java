@@ -1,6 +1,7 @@
 package com.fitness.userService.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fitness.userService.dto.LoginRequestDTO;
 import com.fitness.userService.dto.ResponseUserDT0;
 import com.fitness.userService.dto.UserDTO;
 import com.fitness.userService.entity.User;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -35,11 +37,14 @@ public class UserServiceImpl implements UserService {
         User user= userRepository.findById(id)
                 .orElseThrow(()-> new RestApiException(String.format("User with id: %s not found", id),
                         HttpStatus.BAD_REQUEST));
-        return ResponseUtil.getResponse(pageableObject.map(user, UserDTO.class),"User");
+        return ResponseUtil.getResponse(mapToSafeDto(user),"User");
     }
 
     @Override
     public ApiResponse<String> createUser(ResponseUserDT0 userDto) {
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new RestApiException("User with this email already exists", HttpStatus.CONFLICT);
+        }
         User user=pageableObject.map(userDto,User.class);
         userRepository.save(user);
         return ResponseUtil.getResponseMessage("User saved");
@@ -60,6 +65,13 @@ public class UserServiceImpl implements UserService {
                 "lastName",user::setLastName
         );
         updateFieldsIfPresent(jsonNode, fieldUpdaters,userDT0);
+        if (jsonNode.has("email")) {
+            userRepository.findByEmail(user.getEmail())
+                    .filter(existing -> !Objects.equals(existing.getId(), user.getId()))
+                    .ifPresent(existing -> {
+                        throw new RestApiException("User with this email already exists", HttpStatus.CONFLICT);
+                    });
+        }
         userRepository.saveAndFlush(user);
         return ResponseUtil.getResponseMessage("User Updated");
     }
@@ -77,6 +89,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResponse<Boolean> existsById(Long id) {
         return ResponseUtil.getResponse(userRepository.existsById(id),"User validation result");
+    }
+
+    @Override
+    public ApiResponse<UserDTO> loginUser(LoginRequestDTO loginRequestDTO) {
+        User user = userRepository.findByEmail(loginRequestDTO.getEmail())
+                .orElseThrow(() -> new RestApiException("Invalid email or password", HttpStatus.UNAUTHORIZED));
+        if (!Objects.equals(user.getPassword(), loginRequestDTO.getPassword())) {
+            throw new RestApiException("Invalid email or password", HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseUtil.getResponse(mapToSafeDto(user), "Login successful");
     }
 
     private void updateFieldsIfPresent(JsonNode jsonNode, Map<String, Consumer<String>> fieldUpdaters, ResponseUserDT0 userDTO) {
@@ -102,5 +124,11 @@ public class UserServiceImpl implements UserService {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
+    }
+
+    private UserDTO mapToSafeDto(User user) {
+        UserDTO userDTO = pageableObject.map(user, UserDTO.class);
+        userDTO.setPassword(null);
+        return userDTO;
     }
 }
