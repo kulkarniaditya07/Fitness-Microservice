@@ -1,5 +1,6 @@
 package com.fitness.userService.service;
 
+import com.fitness.userService.dto.LoginRequestDTO;
 import com.fitness.userService.dto.ResponseUserDT0;
 import com.fitness.userService.dto.UserDTO;
 import com.fitness.util.response.ApiResponse;
@@ -16,4 +17,6 @@ public interface UserService {
 
 
     ApiResponse<Boolean> existsById(Long id);
+
+    ApiResponse<UserDTO> loginUser(LoginRequestDTO loginRequestDTO);
 }

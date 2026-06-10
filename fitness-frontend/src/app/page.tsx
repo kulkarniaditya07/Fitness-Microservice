@@ -1,65 +1,47 @@
-import Link from 'next/link';
-import { Navbar } from '@/components/layout/Navbar';
+import Link from "next/link";
 
-const highlights = [
-  {
-    title: 'Track Every Activity',
-    text: 'Capture workouts with duration, calories, and trends in a clean dashboard.',
-  },
-  {
-    title: 'Smart Recommendations',
-    text: 'Receive AI-driven suggestions and safety tips tailored to your routine.',
-  },
-  {
-    title: 'Progress That Motivates',
-    text: 'Visual insights and streaks help you keep momentum every week.',
-  },
-];
-
-export default function HomePage() {
+export default function LandingPage() {
   return (
-    <main className="min-h-screen">
-      <Navbar />
+    <main className="min-h-screen bg-gradient-to-br from-neutral via-white to-sky-50">
+      <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">
+          FITNESS MICROSERVICE
+        </p>
+        <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight text-dark md:text-5xl">
+          Train smarter with real-time tracking and AI-driven recommendations.
+        </h1>
+        <p className="mt-6 max-w-2xl text-base text-slate-600 md:text-lg">
+          Unified dashboard for workouts, trends, and personalized coaching insights.
+        </p>
 
-      <section className="px-4 md:px-8 pt-14 pb-12">
-        <div className="max-w-6xl mx-auto rounded-3xl border border-primary/20 overflow-hidden">
-          <div className="pattern-grid bg-dots p-8 md:p-14 bg-[length:22px_22px]">
-            <div className="fade-up">
-              <span className="badge badge-secondary badge-lg">Fitness Microservice Frontend</span>
-              <h1 className="text-4xl md:text-6xl font-black mt-5 leading-tight max-w-3xl text-neutral">
-                Build Strong Habits With a Bold, Interactive Fitness Experience.
-              </h1>
-              <p className="text-lg mt-5 max-w-2xl text-neutral/75">
-                FitTrack Pro combines activity tracking, analytics, and personalized guidance in one
-                modern interface.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/dashboard" className="btn btn-primary btn-wide">
-                  Open Dashboard
-                </Link>
-                <Link href="/auth/register" className="btn btn-outline btn-wide">
-                  Create Account
-                </Link>
-              </div>
-            </div>
-          </div>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/auth/login" className="btn btn-primary">
+            Sign In
+          </Link>
+          <Link href="/auth/register" className="btn btn-outline btn-primary">
+            Create Account
+          </Link>
         </div>
-      </section>
 
-      <section className="px-4 md:px-8 pb-16">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-4">
-          {highlights.map((item, index) => (
-            <article
-              key={item.title}
-              className="card-rise card bg-base-100 border border-base-300 shadow-sm"
-              style={{ animationDelay: `${index * 120}ms` }}
-            >
-              <div className="card-body">
-                <h2 className="card-title text-xl">{item.title}</h2>
-                <p className="text-neutral/75">{item.text}</p>
-              </div>
-            </article>
-          ))}
+        <div className="mt-12 grid gap-4 md:grid-cols-3">
+          <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-semibold text-dark">Activity Tracking</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Log workouts with duration, calories, and custom metrics in seconds.
+            </p>
+          </article>
+          <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-semibold text-dark">Health Analytics</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Visualize weekly and monthly trends with responsive charting.
+            </p>
+          </article>
+          <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-semibold text-dark">AI Recommendations</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Receive performance insights, suggestions, and safety guidance.
+            </p>
+          </article>
         </div>
       </section>
     </main>

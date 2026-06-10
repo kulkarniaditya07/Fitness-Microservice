@@ -1,22 +1,26 @@
-import React from 'react';
+import type { User } from "@/types/models";
 
-export function ProfileCard() {
+interface ProfileCardProps {
+  user: User;
+}
+
+export const ProfileCard = ({ user }: ProfileCardProps) => {
   return (
-    <div className="card bg-base-100 border border-base-300 shadow-sm">
-      <div className="card-body">
-        <div className="flex items-center gap-4">
-          <div className="avatar placeholder">
-            <div className="bg-primary text-primary-content rounded-full w-16">
-              <span className="text-xl">AK</span>
-            </div>
-          </div>
-          <div>
-            <h3 className="font-black text-xl">Aditya Kulkarni</h3>
-            <p className="text-sm text-neutral/70">aditya@example.com</p>
-            <p className="text-xs text-neutral/60 mt-1">Member since Feb 20, 2026</p>
-          </div>
+    <article className="card border border-slate-200 bg-white shadow-sm">
+      <div className="card-body p-4">
+        <h2 className="text-xl font-semibold text-dark">Profile</h2>
+        <div className="mt-3 space-y-2 text-sm">
+          <p>
+            <span className="font-semibold">Name:</span> {user.firstName} {user.lastName}
+          </p>
+          <p>
+            <span className="font-semibold">Email:</span> {user.email}
+          </p>
+          <p>
+            <span className="font-semibold">Role:</span> {user.userRole}
+          </p>
         </div>
       </div>
-    </div>
+    </article>
   );
-}
+};

@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ActivityServiceImpl implements ActivityService {
@@ -36,7 +39,10 @@ public class ActivityServiceImpl implements ActivityService {
         try {
             kafkaTemplate.send(topicName,String.valueOf(activity.getUserId()), activity);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RestApiException(
+                    "Failed to send activity data to Kafka topic: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
         return ResponseUtil.getResponseMessage("Activity Saved!");
     }
@@ -53,6 +59,31 @@ public class ActivityServiceImpl implements ActivityService {
         return ResponseUtil.getResponse(response, "Activity Found");
     }
 
+    @Override
+    public ApiResponse<List<ActivityResponse>> findActivitiesByUser(Long userId, Integer page, Integer limit) {
+        validateUser(userId);
+        int safePage = page == null || page < 1 ? 1 : page;
+        int safeLimit = limit == null || limit < 1 ? 20 : Math.min(limit, 100);
+        long skip = (long) (safePage - 1) * safeLimit;
+
+        List<ActivityResponse> activities = activityRepository.findByUserIdOrderByStartTimeDesc(userId)
+                .stream()
+                .skip(skip)
+                .limit(safeLimit)
+                .map(activity -> pageableObject.map(activity, ActivityResponse.class))
+                .collect(Collectors.toList());
+
+        return ResponseUtil.getResponse(activities, "Activities Found");
+    }
+
+    @Override
+    public ApiResponse<String> deleteActivity(String id) {
+        if (!activityRepository.existsById(id)) {
+            throw new RestApiException(String.format("Activity with id: %s not found", id), HttpStatus.NOT_FOUND);
+        }
+        activityRepository.deleteById(id);
+        return ResponseUtil.getResponseMessage("Activity Deleted");
+    }
 
 
     private void validateUser(Long userId) {

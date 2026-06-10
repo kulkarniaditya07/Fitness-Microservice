@@ -1,113 +1,45 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
+import { useState } from "react";
+import { ActivityForm, ActivityFormValues } from "@/components/activity/ActivityForm";
+import { useNotificationStore } from "@/store/notificationStore";
 
-type ActivityType = 'RUNNING' | 'CYCLING' | 'YOGA' | 'WALKING' | 'GYM';
-
-interface Activity {
-  type: ActivityType;
-  duration: number;
-  calories: number;
+interface ActivityTrackerProps {
+  onTracked?: (values: ActivityFormValues) => Promise<void> | void;
 }
 
-const activityOptions: ActivityType[] = ['RUNNING', 'CYCLING', 'YOGA', 'WALKING', 'GYM'];
+export const ActivityTracker = ({ onTracked }: ActivityTrackerProps) => {
+  const addNotification = useNotificationStore((state) => state.add);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-export function ActivityTracker() {
-  const [form, setForm] = useState<Activity>({ type: 'RUNNING', duration: 30, calories: 220 });
-  const [activities, setActivities] = useState<Activity[]>([
-    { type: 'RUNNING', duration: 40, calories: 340 },
-    { type: 'YOGA', duration: 45, calories: 160 },
-  ]);
+  const handleSubmit = async (values: ActivityFormValues) => {
+    setErrorMessage(null);
 
-  const totalCalories = useMemo(
-    () => activities.reduce((sum, item) => sum + item.calories, 0),
-    [activities],
-  );
-
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setActivities((prev) => [form, ...prev]);
-    setForm({ ...form, duration: 30, calories: 200 });
+    try {
+      await onTracked?.(values);
+      addNotification({
+        type: "success",
+        message: "Activity logged successfully",
+      });
+    } catch {
+      setErrorMessage("Failed to save activity. Please try again.");
+      addNotification({
+        type: "error",
+        message: "Unable to log activity",
+      });
+    }
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="card bg-base-100 border border-base-300 shadow-sm">
-        <form onSubmit={onSubmit} className="card-body gap-3">
-          <h3 className="card-title">Track Activity</h3>
-          <label className="form-control">
-            <span className="label-text">Activity Type</span>
-            <select
-              className="select select-bordered"
-              value={form.type}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, type: event.target.value as ActivityType }))
-              }
-            >
-              {activityOptions.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-control">
-            <span className="label-text">Duration (minutes)</span>
-            <input
-              className="input input-bordered"
-              type="number"
-              min={1}
-              value={form.duration}
-              onChange={(event) => setForm((prev) => ({ ...prev, duration: Number(event.target.value) }))}
-            />
-          </label>
-
-          <label className="form-control">
-            <span className="label-text">Calories Burned</span>
-            <input
-              className="input input-bordered"
-              type="number"
-              min={1}
-              value={form.calories}
-              onChange={(event) => setForm((prev) => ({ ...prev, calories: Number(event.target.value) }))}
-            />
-          </label>
-
-          <button className="btn btn-primary mt-2" type="submit">
-            Add Activity
-          </button>
-        </form>
-      </div>
-
-      <div className="card bg-base-100 border border-base-300 shadow-sm">
-        <div className="card-body">
-          <div className="flex justify-between items-center">
-            <h3 className="card-title">Recent Logs</h3>
-            <span className="badge badge-secondary badge-lg">{totalCalories} kcal</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="table table-zebra">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Duration</th>
-                  <th>Calories</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activities.map((activity, index) => (
-                  <tr key={`${activity.type}-${index}`}>
-                    <td>{activity.type}</td>
-                    <td>{activity.duration} min</td>
-                    <td>{activity.calories}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+    <section className="card border border-slate-200 bg-white shadow-sm">
+      <div className="card-body p-4">
+        <h2 className="text-xl font-semibold text-dark">Activity Tracker</h2>
+        <p className="text-sm text-slate-500">Log workouts and training sessions.</p>
+        {errorMessage ? <div className="alert alert-error mt-3 text-sm">{errorMessage}</div> : null}
+        <div className="mt-3">
+          <ActivityForm onSubmit={handleSubmit} submitLabel="Log activity" />
         </div>
       </div>
-    </div>
+    </section>
   );
-}
+};

@@ -11,6 +11,22 @@ spring:
           jwk-set-uri: http://localhost:8181/realms/fitness/protocol/openid-connect/certs
   cloud:
     gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://127.0.0.1:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
       server:
         webflux:
           routes:

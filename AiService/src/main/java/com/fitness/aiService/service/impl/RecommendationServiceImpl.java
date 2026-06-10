@@ -40,4 +40,10 @@ public class RecommendationServiceImpl implements RecommendationService {
         return ResponseUtil.getResponse(pageableObject.map(recommendation,RecommendationDto.class),"Recommendation based on activity provided");
     }
 
+    @Override
+    public ApiResponse<List<RecommendationDto>> generateRecommendationOnUser(Long userId) {
+        // Recommendations are asynchronously generated from activity Kafka events.
+        // This endpoint returns the latest available recommendations for frontend compatibility.
+        return getRecommendationOnUser(userId);
+    }
 }

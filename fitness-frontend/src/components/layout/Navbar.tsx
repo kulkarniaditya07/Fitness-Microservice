@@ -1,24 +1,19 @@
-import Link from 'next/link';
+import Link from "next/link";
+import { LogoutButton } from "@/components/auth/LogoutButton";
+import { MobileMenu } from "@/components/layout/MobileMenu";
 
-export function Navbar() {
+export const Navbar = () => {
   return (
-    <div className="navbar px-4 md:px-8 bg-base-100/80 backdrop-blur border-b border-base-300 sticky top-0 z-20">
-      <div className="flex-1">
-        <Link href="/" className="text-xl font-black tracking-tight text-primary">
-          FitTrack Pro
+    <nav className="navbar border-b border-slate-200 bg-white px-4 lg:px-6">
+      <div className="navbar-start gap-2">
+        <MobileMenu />
+        <Link href="/dashboard" className="text-lg font-bold text-primary">
+          Fitness Microservice
         </Link>
       </div>
-      <div className="hidden md:flex gap-2 mr-4">
-        <Link className="btn btn-ghost btn-sm" href="/auth/login">
-          Login
-        </Link>
-        <Link className="btn btn-ghost btn-sm" href="/auth/register">
-          Register
-        </Link>
-        <Link className="btn btn-primary btn-sm" href="/dashboard">
-          Dashboard
-        </Link>
+      <div className="navbar-end">
+        <LogoutButton />
       </div>
-    </div>
+    </nav>
   );
-}
+};
